@@ -5,10 +5,7 @@ MAINTAINER Andreas Warnaar
 ARG local_user_id=1000
 ARG local_user_group_id=1000
 
-ADD apache2.conf /etc/apache2/apache2.conf
-ADD 000-default.conf /etc/apache2/sites-available/000-default.conf
-ADD default-ssl.conf /etc/apache2/sites-available/default-ssl.conf
-ADD project.ini /usr/local/etc/php/conf.d/project.ini
+
 
 RUN groupadd --gid $local_user_group_id host && useradd -u $local_user_id -g $local_user_group_id host -s /bin/bash -m && \
     usermod -a -G www-data host
@@ -78,5 +75,10 @@ EXPOSE 80 443
 ENV IS_DOCKER 1
 COPY xdebug.ini /usr/local/etc/php/conf.d/xdebug.ini
 COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+COPY apache2.conf /etc/apache2/apache2.conf
+COPY 000-default.conf /etc/apache2/sites-available/000-default.conf
+COPY default-ssl.conf /etc/apache2/sites-available/default-ssl.conf
+COPY project.ini /usr/local/etc/php/conf.d/project.ini
+
 
 CMD ["/usr/bin/supervisord"]
