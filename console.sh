@@ -77,7 +77,12 @@ if [ $# -gt 0 ];then
             -w /var/www/html \
             web \
             ./vendor/bin/phpunit "$@"
-            $COMPOSE down &> /dev/null
+            $COMPOSE down &> /dev/nul
+    elif [ "$1" == "restart-phpreact" ]; then
+        curl "http://user:123@127.0.0.1:9001/index.html?processname=reactphp:reactphp-0&action=restart" &> /dev/null
+        curl "http://user:123@127.0.0.1:9001/index.html?processname=reactphp:reactphp-1&action=restart" &> /dev/null
+        curl "http://user:123@127.0.0.1:9001/index.html?processname=reactphp:reactphp-2&action=restart" &> /dev/null
+        curl "http://user:123@127.0.0.1:9001/index.html?processname=reactphp:reactphp-3&action=restart" &> /dev/null
     else
         $COMPOSE "$@"
     fi

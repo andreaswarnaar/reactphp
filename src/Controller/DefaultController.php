@@ -16,11 +16,14 @@ use Symfony\Component\Routing\Annotation\Route;
 class DefaultController extends Controller
 {
     /**
+     * Test all
      * @Route(name="indexKip", path="/kip")
      * @return Response
      */
     public function indexAction() {
-        return new Response('Kip');
+        $kip = new \stdClass();
+        return new Response('Karel');
+
     }
 
     /**
