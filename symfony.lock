@@ -29,6 +29,9 @@
     "evenement/evenement": {
         "version": "v3.0.1"
     },
+    "guzzlehttp/psr7": {
+        "version": "1.4.2"
+    },
     "psr/cache": {
         "version": "1.0.1"
     },
@@ -43,6 +46,9 @@
     },
     "psr/simple-cache": {
         "version": "1.0.0"
+    },
+    "ratchet/rfc6455": {
+        "version": "v0.2.3"
     },
     "react/cache": {
         "version": "v0.4.2"
@@ -184,6 +190,9 @@
     },
     "twig/twig": {
         "version": "v2.4.4"
+    },
+    "voryx/websocketmiddleware": {
+        "version": "1.0.1"
     },
     "wyrihaximus/react-http-middleware-webroot-preload": {
         "version": "1.0.0"

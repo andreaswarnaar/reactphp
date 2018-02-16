@@ -31,7 +31,6 @@ if ($debug) {
 $kernel = new Kernel($env, $debug);
 
 $callback = function (\Psr\Http\Message\ServerRequestInterface $request) use ($kernel) {
-
     $method = $request->getMethod();
     $headers = $request->getHeaders();
     $query = $request->getQueryParams();
@@ -57,7 +56,7 @@ $callback = function (\Psr\Http\Message\ServerRequestInterface $request) use ($k
     echo '===========================================================================';
     echo '===========================================================================';
     echo '===========================================================================';
-    echo $request->getRequestTarget().PHP_EOL;
+    echo $request->getRequestTarget() . PHP_EOL;
     echo '===========================================================================';
 
 
@@ -80,10 +79,59 @@ $callback = function (\Psr\Http\Message\ServerRequestInterface $request) use ($k
 ini_set('display_errors', 1);
 $loop = React\EventLoop\Factory::create();
 
-$server = new \React\Http\Server($callback);
 
+$broadcast = new \React\Stream\ThroughStream();
+
+$ws = new \Voryx\WebSocketMiddleware\WebSocketMiddleware(
+    ['/ws'],
+    function (\Voryx\WebSocketMiddleware\WebSocketConnection $conn, \Psr\Http\Message\ServerRequestInterface $request, \Psr\Http\Message\ResponseInterface $response) use ($broadcast, $loop) {
+        static $user = 0;
+
+        // do not send on the connection before the react http server has a chance to start listening
+        // on the streams
+        $loop->addTimer(0, function () use ($conn, $user, $broadcast) {
+            $broadcast->write('user ' . $user . ' connected');
+            $conn->send('Welcome. You are user ' . $user);
+        });
+
+        $broadcastHandler = function ($data) use ($conn) {
+            $conn->send($data);
+        };
+
+        $broadcast->on('data', $broadcastHandler);
+
+        $conn->on('message', function (\Ratchet\RFC6455\Messaging\Message $message) use ($broadcast, $conn, $user) {
+            $broadcast->write('user ' . $user . ': ' . $message->getPayload());
+        });
+
+        $conn->on('error', function (Throwable $e) use ($broadcast, $user, $broadcastHandler) {
+            $broadcast->removeListener('data', $broadcastHandler);
+            $broadcast->write('user ' . $user . ' left because of error: ' . $e->getMessage());
+        });
+
+        $conn->on('close', function () use ($broadcast, $user, $broadcastHandler) {
+            $broadcast->removeListener('data', $broadcastHandler);
+            $broadcast->write('user ' . $user . ' closed their connection');
+        });
+
+        $user++;
+    });
+
+$server = new \React\Http\Server([function (\Psr\Http\Message\ServerRequestInterface $request, callable $next) use ($broadcast) {
+    // lets let the people chatting see what requests are happening too.
+    $broadcast->write('<i>Request: ' . $request->getUri()->getPath() . '</i>');
+
+    return $next($request);
+},
+    $ws,
+    function (\Psr\Http\Message\ServerRequestInterface $request, callable $next) {
+        $request = $request->withHeader('Request-Time', time());
+
+        return $next($request);
+    },
+    $callback]);
 $socket = new React\Socket\Server('0.0.0.0:' . $_SERVER['PORT'], $loop);
-$server->on('error',function (Exception $e) {
+$server->on('error', function (Exception $e) {
     echo 'Error: ' . $e->__toString() . PHP_EOL;
 });
 $server->listen($socket);
