@@ -4,21 +4,31 @@
     "require": {
         "php": "^7.0.8",
         "ext-iconv": "*",
+        "api-platform/api-pack": "^1.1",
+        "api-platform/schema-generator": "^2.1",
+        "aura/payload": "^3.0",
+        "clue/redis-react": "^2.2",
+        "predis/predis": "^1.1",
         "react/http": "^0.8.1",
         "sensio/framework-extra-bundle": "^5.1",
         "symfony/console": "^3.4",
+        "symfony/dotenv": "^3.4",
         "symfony/flex": "^1.0",
         "symfony/framework-bundle": "^3.4",
         "symfony/lts": "^3",
+        "symfony/orm-pack": "^1.0",
+        "symfony/phpunit-bridge": "^3.4",
         "symfony/routing": "^3.4",
         "symfony/templating": "^3.4",
+        "symfony/test-pack": "^1.0",
         "symfony/twig-bundle": "^3.4",
         "symfony/yaml": "^3.4",
         "voryx/websocketmiddleware": "^1.0",
+        "webonyx/graphql-php": "^0.11.5",
         "wyrihaximus/react-http-middleware-webroot-preload": "^1.0"
     },
     "require-dev": {
-        "symfony/dotenv": "^3.4"
+
     },
     "config": {
         "preferred-install": {

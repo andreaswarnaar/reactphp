@@ -8,28 +8,40 @@
 <input id="input">
 <div id="messages">
 
+    <script>
+        var ws = new WebSocket('ws://localhost:5500/ws');
+
+        ws.onopen = x => console.log('opened', x);
+
+        var messages = document.getElementById('messages');
+        ws.onmessage = m => {
+            var newMsg = document.createElement('div');
+            newMsg.innerHTML = m.data;
+            messages.appendChild(newMsg);
+            console.log('message', m);
+        };
+
+        var input = document.getElementById('input');
+        input.onkeydown = e => {
+            if (e.keyCode == 13) {
+                var msg = {};
+
+                if(input.value == 'main') {
+                    msg.type = 'subscribe';
+                    msg.channel = 'main';
+                } else {
+                    msg.type = 'message';
+                    msg.channel = 'main';
+                    msg.message = input.value;
+                }
+                ws.send(JSON.stringify(msg));
+                input.value = '';
+            }
+        };
+    </script>
 </div>
-<script>
-    var ws = new WebSocket('ws://localhost:5500/ws');
 
-    ws.onopen = x => console.log('opened', x);
 
-    var messages = document.getElementById('messages');
-    ws.onmessage = m => {
-        var newMsg = document.createElement('div');
-        newMsg.innerHTML = m.data;
-        messages.appendChild(newMsg);
-        console.log('message', m);
-    };
-
-    var input = document.getElementById('input');
-    input.onkeydown = e => {
-        if (e.keyCode == 13) {
-            ws.send(input.value);
-            input.value = '';
-        }
-    };
-</script>
 
 </body>
 </html>

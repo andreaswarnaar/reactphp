@@ -27,7 +27,7 @@ class DefaultController extends Controller
     }
 
     /**
-     * @Route(name="apiBase", path="/api")
+     * @Route(name="apiBase", path="/api-kip")
      * @return JsonResponse
      */
     public function apiAction() {
